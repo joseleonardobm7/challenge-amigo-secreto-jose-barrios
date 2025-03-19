@@ -1,24 +1,24 @@
 // Solución del challenge amigo secreto
 
 const friends = [];
-const selectedFriends = [];
+const unselectedFriends = [];
 
 const inputName = document.getElementById("friend");
 const friendList = document.getElementById("friendList");
-const message = document.getElementById("resultado");
+const message = document.getElementById("message");
 
 // Función para agregar amigos
 const agregarAmigo = () => {
-  let nombreAmigo = inputName.value.trim();
-  if (nombreAmigo) {
-    if (amigos.includes(nombreAmigo)) {
-      inputNombreAmigo.value = "";
-      alert(`Ya existe un amigo llamado ${nombreAmigo}`);
+  let friendName = inputName.value.trim();
+  if (friendName) {
+    if (friends.includes(friendName)) {
+      inputName.value = "";
+      alert(`Ya existe un amigo llamado ${friendName}`);
       return;
     }
-    amigos.push(inputNombreAmigo.value);
-    amigosElegibles.push({ nombre: inputNombreAmigo.value, elegido: false });
-    inputNombreAmigo.value = "";
+    friends.push(inputName.value);
+    unselectedFriends.push({ nombre: inputName.value, elegido: false });
+    inputName.value = "";
     actualizarListaAmigos();
     return;
   }
@@ -27,36 +27,36 @@ const agregarAmigo = () => {
 
 // Función para actualizar la lista de amigos
 const actualizarListaAmigos = () => {
-  listaAmigos.innerHTML = "";
-  amigosElegibles.forEach((amigo) => {
+  friendList.innerHTML = "";
+  unselectedFriends.forEach((amigo) => {
     const li = document.createElement("li");
     const eliminarButton = createDeleteButton(amigo);
 
     li.textContent = amigo.nombre;
     li.appendChild(eliminarButton);
 
-    listaAmigos.appendChild(li);
+    friendList.appendChild(li);
   });
   // Limpiar el resultado anterior
-  if (resultado.textContent) {
-    resultado.textContent = "";
+  if (message.textContent) {
+    message.textContent = "";
   }
 };
 
 // Función para sortear amigos
 const sortearAmigo = () => {
-  if (amigosElegibles.some((amigo) => amigo.elegido === false)) {
+  if (unselectedFriends.some((amigo) => amigo.elegido === false)) {
     startConfetti();
-    const indiceAmigo = Math.floor(Math.random() * amigos.length);
-    const [amigoElegido] = amigos.splice(indiceAmigo, 1);
-    const indiceAmigoElegido = amigosElegibles.findIndex(
+    const indiceAmigo = Math.floor(Math.random() * friends.length);
+    const [amigoElegido] = friends.splice(indiceAmigo, 1);
+    const indiceAmigoElegido = unselectedFriends.findIndex(
       (amigo) => amigo.nombre === amigoElegido
     );
-    amigosElegibles[indiceAmigoElegido].elegido = true;
+    unselectedFriends[indiceAmigoElegido].elegido = true;
     mostrarResultado(`El amigo elegido es ${amigoElegido}`);
   } else {
     mostrarResultado(
-      !amigosElegibles.length
+      !unselectedFriends.length
         ? "No hay amigos para sortear"
         : "Todos los amigos ya han sido elegidos"
     );
@@ -66,16 +66,16 @@ const sortearAmigo = () => {
 // Función para reiniciar el sorteo
 const reiniciarSorteo = () => {
   if (
-    !amigosElegibles.length ||
-    amigosElegibles.every((amigo) => !amigo.elegido)
+    !unselectedFriends.length ||
+    unselectedFriends.every((amigo) => !amigo.elegido)
   ) {
     return;
   }
 
   if (window.confirm("¿Está seguro de que desea reiniciar el sorteo?")) {
-    amigos.splice();
-    amigosElegibles.forEach((amigo) => {
-      amigos.push(amigo.nombre);
+    friends.splice();
+    unselectedFriends.forEach((amigo) => {
+      friends.push(amigo.nombre);
       amigo.elegido = false;
     });
 
@@ -85,26 +85,26 @@ const reiniciarSorteo = () => {
 
 // Función para mostrar el resultado del sorteo
 const mostrarResultado = (mensaje) => {
-  resultado.innerHTML = mensaje;
+  message.innerHTML = mensaje;
   setTimeout(() => {
-    resultado.innerHTML = "";
+    message.innerHTML = "";
   }, 3000);
 };
 
 // Función para eliminar un amigo
 const eliminarAmigo = (nombre) => {
-  const indiceAmigo = amigos.findIndex((amigo) => amigo === nombre);
+  const indiceAmigo = friends.findIndex((amigo) => amigo === nombre);
   if (indiceAmigo !== -1) {
     if (
       window.confirm(
         `¿Está seguro de que desea remover a ${nombre} del sorteo?`
       )
     ) {
-      const [amigoEliminado] = amigos.splice(indiceAmigo, 1);
-      const indiceAmigoEliminado = amigosElegibles.findIndex(
+      const [amigoEliminado] = friends.splice(indiceAmigo, 1);
+      const indiceAmigoEliminado = unselectedFriends.findIndex(
         (amigo) => amigo.nombre === amigoEliminado
       );
-      amigosElegibles.splice(indiceAmigoEliminado, 1);
+      unselectedFriends.splice(indiceAmigoEliminado, 1);
       actualizarListaAmigos();
       mostrarResultado(`${nombre} se remueve del sorteo`);
     }
